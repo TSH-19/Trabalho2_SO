@@ -271,7 +271,7 @@ static void waitReferee (int id, int team)
         exit (EXIT_FAILURE);
     }
 
-    /* TODO: insert your code here */
+    /* TODO: insert your code here ---------------------------------------------------------*/
     if (semUp(semgid, sh->playing) == -1) {                 // Sinal ao arbitro que o redes está pronto
         perror("Error signaling referee (waitReferee)");
         exit(EXIT_FAILURE);
@@ -300,7 +300,7 @@ static void playUntilEnd (int id, int team)
         exit (EXIT_FAILURE);
     }
 
-    /* TODO: insert your code here */
+    /* TODO: insert your code here ------------------------------------------------------------------*/
     sh->fSt.st.goalieStat[id] = (team == 1) ? PLAYING_1 : PLAYING_2;                            // Atualiza o estado do guarda-redes para Playing
     saveState(nFic, &sh->fSt);
 
@@ -310,7 +310,7 @@ static void playUntilEnd (int id, int team)
         exit (EXIT_FAILURE);
     }
 
-    /* TODO: insert your code here */
+    /* TODO: insert your code here ---------------------------------------------------------------------*/
     if (semDown(semgid, sh->playersWaitEnd) == -1) {                                            // Faz o guarda redes esperar pelo arbitro
         perror("error on the up operation for semaphore access(GL)");
         exit(EXIT_FAILURE);
