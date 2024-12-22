@@ -272,6 +272,11 @@ static void waitReferee (int id, int team)
     }
 
     /* TODO: insert your code here */
+    if (semUp(semgid, sh->playing) == -1) {                 // Sinal ao arbitro que o redes está pronto
+        perror("Error signaling referee (waitReferee)");
+        exit(EXIT_FAILURE);
+    }
+    
     if (semDown(semgid, sh->playersWaitReferee) == -1) {                                          // Faz o guarda redes esperar pelo arbitro
         perror("error on the up operation for semaphore access(GL)");
         exit(EXIT_FAILURE);
