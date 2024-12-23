@@ -272,7 +272,7 @@ static void waitReferee (int id, int team)
     }
 
     /* TODO: insert your code here ---------------------------------------------------------*/
-    if (semUp(semgid, sh->playing) == -1) {                 // Sinal ao arbitro que o redes está pronto
+    if (semUp(semgid, sh->playing) == -1) {                                                        // Sinal ao arbitro que o redes está pronto
         perror("Error signaling referee (waitReferee)");
         exit(EXIT_FAILURE);
     }
