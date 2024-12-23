@@ -143,6 +143,8 @@ static void arrive ()
     }
 
     /* TODO: insert your code here */
+    sh->fSt.st.refereeStat = ARRIVING;  // Atribuir estado "ARRIVING" ao arbitro
+    saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                        /* leave critical region */
         perror ("error on the up operation for semaphore access (RF)");
@@ -168,7 +170,7 @@ static void waitForTeams ()
     }
 
     /* TODO: insert your code here */
-    sh->fSt.st.refereeStat = WAITING_TEAMS;
+    sh->fSt.st.refereeStat = WAITING_TEAMS; // atribuir estado "WAITING_TEAMS ao arbitro"
     saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                        /* leave critical region */
@@ -177,6 +179,17 @@ static void waitForTeams ()
     }
 
     /* TODO: insert your code here */
+    // código responsável pela espera do arbitro por cada uma das equipas
+
+    if(semDown(semgid, sh->refereeWaitTeams) == -1){
+        perror ("error on the up operation for semaphore access (RF)");
+        exit (EXIT_FAILURE);
+    }
+
+    if(semDown(semgid, sh->refereeWaitTeams) == -1){
+        perror ("error on the up operation for semaphore access (RF)");
+        exit (EXIT_FAILURE);
+    }
 
 }
 
@@ -195,6 +208,9 @@ static void startGame ()
     }
 
     /* TODO: insert your code here */
+    // Alterar estado do arbitro para "STARTING_GAME"
+    sh->fSt.st.refereeStat = STARTING_GAME;
+    saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                        /* leave critical region */
         perror ("error on the up operation for semaphore access (RF)");
@@ -202,6 +218,14 @@ static void startGame ()
     }
 
     /* TODO: insert your code here */
+    // É necessário passar a informação aos players e goalies que o jogo pode começar, incrementando o semaforo playersWaitReferee 10x
+
+    for(int i = 0; i < 10; i++){
+        if(semUp(semgid, sh->playersWaitReferee) == -1){
+            perror ("error on the up operation for semaphore access (RF)");
+            exit (EXIT_FAILURE);
+        }
+    }
 
 }
 
@@ -220,6 +244,9 @@ static void play ()
     }
 
     /* TODO: insert your code here */
+    // alterar estado do arbitro para "REFEREEING"
+    sh->fSt.st.refereeStat = REFEREEING;
+    saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                        /* leave critical region */
         perror ("error on the up operation for semaphore access (RF)");
@@ -244,6 +271,9 @@ static void endGame ()
     }
 
     /* TODO: insert your code here */
+    // alterar estado do arbitro para "ENDING_GAME"
+    sh->fSt.st.refereeStat = ENDING_GAME;
+    saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                        /* leave critical region */
         perror ("error on the up operation for semaphore access (RF)");
@@ -251,5 +281,12 @@ static void endGame ()
     }
 
     /* TODO: insert your code here */
+    // desbloquear semaforo playersWaitEnd para cada player/goalie que estava à espera que o jogo terminasse
+    for(int i = 0; i < 10; i++){
+        if(semUp(semgid, sh->playersWaitEnd) == -1){
+            perror ("error on the up operation for semaphore access (RF)");
+            exit (EXIT_FAILURE);
+        }
+    }
 
 }
