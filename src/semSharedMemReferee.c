@@ -143,7 +143,7 @@ static void arrive ()
     }
 
     /* TODO: insert your code here */
-    sh->fSt.st.refereeStat = ARRIVING;  // Atribuir estado "ARRIVING" ao arbitro
+    sh->fSt.st.refereeStat = ARRIVINGR;  // Atribuir estado "ARRIVINGR" ao arbitro
     saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                        /* leave critical region */
@@ -225,7 +225,9 @@ static void startGame ()
             perror ("error on the up operation for semaphore access (RF)");
             exit (EXIT_FAILURE);
         }
-
+    }
+    
+    for(int i = 0; i < NUMPLAYERS; i++){
         if(semDown(semgid, sh->playing) == -1){
             perror ("error on the up operation for semaphore access (RF)");
             exit (EXIT_FAILURE);
