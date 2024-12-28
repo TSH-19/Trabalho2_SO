@@ -218,7 +218,7 @@ static void startGame ()
     }
 
     /* TODO: insert your code here */
-    // É necessário passar a informação aos players e goalies que o jogo pode começar, incrementando o semaforo playersWaitReferee 10x
+    // É necessário passar a informação aos players e goalies que o jogo pode começar, incrementando o semaforo playersWaitReferee 10x e decrementando o semáforo playing 10x
 
     for(int i = 0; i < NUMPLAYERS; i++){
         if(semUp(semgid, sh->playersWaitReferee) == -1){
