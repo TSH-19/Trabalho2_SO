@@ -173,7 +173,6 @@ static void arrive(int id)
  */
 static int playerConstituteTeam (int id){
     int ret = 0;
-    int wait = 0;
 
     if (semDown (semgid, sh->mutex) == -1)  {                                                     /* enter critical region */
         perror ("error on the up operation for semaphore access (PL)");
@@ -185,13 +184,12 @@ static int playerConstituteTeam (int id){
     sh->fSt.playersFree++;          // Incrementar playersFree
     sh->fSt.playersArrived++;       // Incremenatr playersArrived
 
-    if (sh->fSt.playersArrived < 9) {                                                               // Verifica se o player chegou atrasado
+    if (sh->fSt.playersArrived <= 8) {                                                              // Verifica se o player chegou atrasado
         
         if ((sh->fSt.playersFree < NUMTEAMPLAYERS) || (sh->fSt.goaliesFree < NUMTEAMGOALIES)) {     // Verifica se tem as condições suficientes para formar equipa
             
             sh->fSt.st.playerStat[id] = WAITING_TEAM;                                               // Define o estado do player como WAITING_TEAM
             saveState(nFic, &sh->fSt);
-            wait = 1;                                                                               // Variável que indica se o jogador está à espera para formar equipa
         }
         else {                                                                                      
             sh->fSt.st.playerStat[id] = FORMING_TEAM;                                               // Define o estado do player como FORMING_TEAM
@@ -212,7 +210,7 @@ static int playerConstituteTeam (int id){
 
             for (int i = 0; i < NUMTEAMPLAYERS - 1; i++) {  
                 if (semUp(semgid, sh->playersWaitTeam) == -1) {
-                    perror("Error on the up operation for semaphore access (PL)");  // Desbloquear players para se juntem à equipa
+                    perror("Error on the up operation for semaphore access (PL)");  // Desbloquear players para que se juntem à equipa
                     exit(EXIT_FAILURE);
                 }
                                                           
@@ -243,9 +241,8 @@ static int playerConstituteTeam (int id){
     }
 
     /* TODO: insert your code here -----------------------------------------------------------*/
-    
     // Caso em que o jogador se encontra à espera para formar equipa
-    if(wait == 1){  
+    if (sh->fSt.st.playerStat[id] == WAITING_TEAM) {
         if (semDown(semgid, sh->playersWaitTeam) == -1) {
             perror("error on the up operation for semaphore access (PL)");      // bloquear jogador até que exista uma equipa para ele se juntar
             exit(EXIT_FAILURE);

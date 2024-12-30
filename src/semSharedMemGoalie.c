@@ -172,7 +172,6 @@ static void arrive(int id)
  */
 static int goalieConstituteTeam (int id){
     int ret = 0;
-    int wait = 0;
 
     if (semDown (semgid, sh->mutex) == -1)  {                                                     /* enter critical region */
         perror ("error on the up operation for semaphore access (GL)");
@@ -184,13 +183,12 @@ static int goalieConstituteTeam (int id){
     sh->fSt.goaliesFree++;          // Incrementar playersFree
     sh->fSt.goaliesArrived++;       // Incrementar playersArrived
 
-    if (sh->fSt.goaliesArrived < 3) {                                                               // Verifica se o goalie chegou atrasado
+    if (sh->fSt.goaliesArrived <= 2) {                                                              // Verifica se o goalie chegou atrasado
         
         if ((sh->fSt.playersFree < NUMTEAMPLAYERS) || (sh->fSt.goaliesFree < NUMTEAMGOALIES)) {     // Verifica se tem as condições suficientes para formar equipa
         
             sh->fSt.st.goalieStat[id] = WAITING_TEAM;                                               // Define o estado do goalie como WAITING_TEAM
             saveState(nFic, &sh->fSt);
-            wait = 1;                                                                               // Variável que indica se o jogador está à espera para formar equipa
         }
         else {                                                                                  
             sh->fSt.st.goalieStat[id] = FORMING_TEAM;                                               // // Define o estado do goalie como FORMING_TEAM                  
@@ -233,9 +231,9 @@ static int goalieConstituteTeam (int id){
 
     /* TODO: insert your code here -----------------------------------------------------------*/
     // Caso em que o goalie se encontra à espera para formar equipa   
-    if(wait == 1){
-        if (semDown(semgid, sh->goaliesWaitTeam) == -1) {                       // bloquear jogador até que exista uma equipa para ele se juntar
-            perror("error on the up operation for semaphore access (GL)");
+    if (sh->fSt.st.goalieStat[id] == WAITING_TEAM) {
+        if (semDown(semgid, sh->goaliesWaitTeam) == -1) {
+            perror("error on the up operation for semaphore access (PL)");      // bloquear goalie até que exista uma equipa para ele se juntar
             exit(EXIT_FAILURE);
         }
 
