@@ -180,8 +180,8 @@ static int goalieConstituteTeam (int id){
 
 
     /* TODO: insert your code here -----------------------------------------------------------------------*/
-    sh->fSt.goaliesFree++;          // Incrementar playersFree
-    sh->fSt.goaliesArrived++;       // Incrementar playersArrived
+    sh->fSt.goaliesFree++;          // Incrementar gaoliesFree
+    sh->fSt.goaliesArrived++;       // Incrementar golaiesArrived
 
     if (sh->fSt.goaliesArrived <= 2) {                                                              // Verifica se o goalie chegou atrasado
         
